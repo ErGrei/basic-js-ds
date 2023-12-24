@@ -52,26 +52,25 @@ class BinarySearchTree {
   }
 
   has(data) {
-    if (!this.treeRoot) {
-      return null;
-    }
-
-
     let current = this.treeRoot;
-    while (true){
-      if (current === undefined){
-        return false;
-      }
-      if (current.data === data) {
+  
+    while (current) {
+      if (data === current.data) {
         return true;
       }
-      if (data < current.data){
+      if (data < current.data) {
+        if (!current.left) {
+          break;
+        }
         current = current.left;
-      }
-      if (data > current.data){
+      } else {
+        if (!current.right) {
+          break;
+        }
         current = current.right;
       }
-    } 
+    }
+    return false;
   }
 
   find(data) {
@@ -79,25 +78,62 @@ class BinarySearchTree {
       return null;
     }
     let current = this.treeRoot;
-    while (true){
-      if (current === undefined){
+    while (true) {
+      if (current === undefined) {
         return null;
       }
       if (current.data === data) {
         return current;
       }
-      if (data < current.data){
+      if (data < current.data) {
         current = current.left;
       }
-      if (data > current.data){
+      if (data > current.data) {
         current = current.right;
       }
-    } 
+    }
   }
 
-  remove(/* data */) {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
+  remove(data) {
+      if (!this.treeRoot) {
+      return null;
+    }
+    this.treeRoot = removeTreeRoot(this.treeRoot, data);
+
+    function removeTreeRoot(node, data) {
+      if (!node) {
+        return null;
+      }
+
+      if (node.data > data) {
+        node.left = removeTreeRoot(node.left, data);
+        return node;
+      } else if (node.data < data) {
+        node.right = removeTreeRoot(node.right, data);
+        return node;
+      } else {
+        if (!node.left && !node.right) {
+          return null;
+        }
+        if (!node.right) {
+          node = node.left;
+          return node;
+        }
+        if (!node.left) {
+          node = node.right;
+          return node;
+        }
+
+        let minRight = node.right;
+
+        while (minRight.left) {
+          minRight = minRight.left;
+        }
+        node.data = minRight.data;
+        node.right = removeTreeRoot(node.right, minRight.data);
+        return node;
+      }
+    }
   }
 
   min() {
